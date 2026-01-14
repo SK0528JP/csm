@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nordic Speed Test</title>
+    <title>Precision Speed Test</title>
     <style>
         /* --- Nordic Design System --- */
         :root {
-            --bg-color: #ECEFF4;        /* Snow Storm */
-            --card-bg: #FFFFFF;         /* Pure White */
-            --text-main: #2E3440;       /* Polar Night */
-            --text-sub: #4C566A;        /* Snow Storm Dark */
-            --accent-blue: #5E81AC;     /* Frost Blue */
-            --accent-green: #A3BE8C;    /* Aurora Green */
-            --accent-red: #BF616A;      /* Aurora Red */
-            --shadow: 0 4px 20px rgba(46, 52, 64, 0.08);
-            --radius: 16px;
-            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --bg-color: #ECEFF4;
+            --card-bg: #FFFFFF;
+            --text-main: #2E3440;
+            --text-sub: #4C566A;
+            --accent-blue: #5E81AC;
+            --accent-green: #A3BE8C;
+            --accent-red: #BF616A;
+            --shadow: 0 8px 30px rgba(46, 52, 64, 0.12);
+            --radius: 12px;
         }
 
         body {
-            font-family: var(--font-stack);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
@@ -34,436 +33,427 @@
 
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 600px;
             display: grid;
             gap: 20px;
         }
 
-        /* Header Area */
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        h1 {
-            font-weight: 300;
-            letter-spacing: 1px;
-            margin: 0;
-            color: var(--text-main);
-        }
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--text-sub);
-            margin-top: 5px;
-        }
-
-        /* Cards */
+        /* Card Styles */
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 24px;
+            padding: 30px;
             box-shadow: var(--shadow);
-            transition: transform 0.2s ease;
-        }
-        
-        /* Main Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: 1fr; }
+            text-align: center;
         }
 
+        h1 {
+            font-size: 1.4rem;
+            margin: 0 0 5px 0;
+            color: var(--text-main);
+            letter-spacing: 0.05em;
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-bottom: 25px;
+        }
+
+        /* Speed Display */
+        .speed-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
         .stat-box {
-            text-align: center;
-            padding: 10px;
+            background: #F4F6F8;
+            padding: 15px;
+            border-radius: 8px;
         }
         .stat-label {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 0.8rem;
             color: var(--text-sub);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
         .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--text-main);
             font-variant-numeric: tabular-nums;
         }
-        .stat-unit {
-            font-size: 1rem;
-            color: var(--text-sub);
-            font-weight: 400;
-        }
+        .stat-unit { font-size: 0.9rem; font-weight: normal; color: #888; }
+        .active-measure { color: var(--accent-blue); }
 
-        /* Ping & Jitter - Smaller display */
-        .latency-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
+        /* Ping Info */
+        .ping-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-bottom: 20px;
         }
-        .latency-box div:first-child { font-size: 0.8rem; color: var(--text-sub); }
-        .latency-box div:last-child { font-size: 1.2rem; font-weight: 600; }
 
         /* Progress Bar */
-        .progress-container {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 8px;
-            height: 6px;
+        .progress-wrapper {
+            height: 4px;
+            background: #E5E9F0;
+            border-radius: 2px;
             margin: 20px 0;
             overflow: hidden;
         }
         .progress-bar {
             height: 100%;
             width: 0%;
-            background-color: var(--accent-blue);
-            transition: width 0.1s linear;
+            background: var(--accent-blue);
+            transition: width 0.2s linear;
         }
 
         /* Button */
-        .btn {
-            background-color: var(--text-main);
+        button {
+            background: var(--text-main);
             color: white;
             border: none;
             padding: 16px 40px;
             font-size: 1rem;
+            font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
             width: 100%;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.1s, opacity 0.2s;
         }
-        .btn:hover {
-            background-color: var(--accent-blue);
-            transform: translateY(-2px);
-        }
-        .btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-            transform: none;
+        button:hover { opacity: 0.9; }
+        button:active { transform: scale(0.98); }
+        button:disabled { background: #D8DEE9; color: #999; cursor: not-allowed; }
+
+        /* Status Text */
+        #status {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            min-height: 1.2em;
         }
 
-        /* Analysis & Details */
-        .analysis-box {
-            background: #F0F4F8;
-            border-left: 4px solid var(--accent-blue);
-            padding: 15px;
+        /* Result Analysis */
+        #result-area {
+            display: none; /* 初期は非表示 */
             margin-top: 20px;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            display: none; /* Hidden initially */
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
         }
-        .details-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            font-size: 0.8rem;
-            color: var(--text-sub);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-        }
-        .details-list li {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .badge {
+        .result-badge {
             display: inline-block;
-            padding: 2px 8px;
+            padding: 4px 12px;
             border-radius: 4px;
-            font-size: 0.7rem;
             color: white;
-            background: var(--text-sub);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .bg-green { background: var(--accent-green); }
+        .bg-blue { background: var(--accent-blue); }
+        .bg-yellow { background: #EBCB8B; color: #555; }
+        .bg-red { background: var(--accent-red); }
+
+        .capability-list {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>NETWORK DIAGNOSTICS</h1>
-        <div class="subtitle">Designed for Precision & Simplicity</div>
-    </header>
-
     <div class="card">
-        <div class="stats-grid">
+        <h1>NETWORK TEST</h1>
+        <div class="subtitle">高精度・長時間測定モード (15秒)</div>
+
+        <div class="speed-grid">
             <div class="stat-box">
-                <div class="stat-label">Download</div>
-                <div class="stat-value" id="dl-speed">--</div>
-                <div class="stat-unit">Mbps</div>
+                <div class="stat-label">ダウンロード</div>
+                <div class="stat-value" id="dl-val">--</div>
+                <span class="stat-unit">Mbps</span>
             </div>
             <div class="stat-box">
-                <div class="stat-label">Upload</div>
-                <div class="stat-value" id="ul-speed">--</div>
-                <div class="stat-unit">Mbps</div>
+                <div class="stat-label">アップロード</div>
+                <div class="stat-value" id="ul-val">--</div>
+                <span class="stat-unit">Mbps</span>
             </div>
         </div>
 
-        <div class="latency-grid">
-            <div class="latency-box">
-                <div>Ping</div>
-                <div id="ping-val">-- ms</div>
-            </div>
-            <div class="latency-box">
-                <div>Jitter</div>
-                <div id="jitter-val">-- ms</div>
-            </div>
+        <div class="ping-info">
+            <span>Ping: <b id="ping-val">--</b> ms</span>
+            <span>Jitter: <b id="jitter-val">--</b> ms</span>
         </div>
 
-        <div class="progress-container">
+        <div class="progress-wrapper">
             <div class="progress-bar" id="progress"></div>
         </div>
 
-        <button class="btn" id="start-btn">RUN DIAGNOSTICS</button>
-        <div id="status-text" style="text-align:center; margin-top:10px; font-size:0.85rem; color:#888;">Ready to measure</div>
-    </div>
+        <button id="start-btn">測定開始</button>
+        <div id="status">準備完了</div>
 
-    <div class="card" id="analysis-card" style="display:none;">
-        <h3 style="margin-top:0;">Performance Analysis</h3>
-        <div class="analysis-box" id="analysis-text"></div>
-    </div>
-
-    <div class="card">
-        <h3 style="font-size:1rem; margin-top:0; color:#888;">Environment Telemetry</h3>
-        <ul class="details-list" id="telemetry">
-            <li>Running calculation...</li>
-        </ul>
+        <div id="result-area">
+            <span id="grade-badge" class="result-badge">判定中...</span>
+            <div id="grade-comment"></div>
+            <ul class="capability-list" id="capability-list"></ul>
+        </div>
     </div>
 </div>
 
 <script>
-    /* CONFIGURATION 
-       Github Pagesの制約上、Uploadは外部のテスト用エンドポイント(httpbin)を使用します。
-       ファイルパスはあなたの環境に合わせてください。
-    */
-    const CONFIG = {
-        dlUrl: "./test.jpg",
-        dlSize: 18.58 * 1024 * 1024, // 18.58 MB
-        ulEndpoint: "https://httpbin.org/post", 
-        ulPayloadSize: 2 * 1024 * 1024, // 2MB (大きすぎると拒否されるため)
-    };
+    // 設定: テストファイルのパス（必ず同じ場所に test.jpg を置いてください）
+    const TEST_FILE_URL = "./test.jpg"; 
+    // 設定: 測定時間 (ミリ秒) - 15秒推奨
+    const TEST_DURATION = 15000; 
+    // 設定: アップロード用エンドポイント (外部サービス利用のため不安定な場合は除外検討)
+    const UPLOAD_ENDPOINT = "https://httpbin.org/post";
 
     const ui = {
         btn: document.getElementById('start-btn'),
-        dlVal: document.getElementById('dl-speed'),
-        ulVal: document.getElementById('ul-speed'),
+        dlVal: document.getElementById('dl-val'),
+        ulVal: document.getElementById('ul-val'),
         pingVal: document.getElementById('ping-val'),
         jitterVal: document.getElementById('jitter-val'),
         progress: document.getElementById('progress'),
-        status: document.getElementById('status-text'),
-        analysisCard: document.getElementById('analysis-card'),
-        analysisText: document.getElementById('analysis-text'),
-        telemetry: document.getElementById('telemetry')
+        status: document.getElementById('status'),
+        resultArea: document.getElementById('result-area'),
+        gradeBadge: document.getElementById('grade-badge'),
+        gradeComment: document.getElementById('grade-comment'),
+        capList: document.getElementById('capability-list')
     };
 
-    // --- Utility Functions ---
     const sleep = ms => new Promise(r => setTimeout(r, ms));
-    const generateRandomData = (size) => {
-        // 軽量化のため、単純な繰り返し文字列で埋める（圧縮の影響を受ける可能性はあるが、ブラウザ生成のBlobとしては最速）
-        return new Blob([new Array(size).fill('a').join('')]);
-    };
 
-    // --- Telemetry (環境情報) ---
-    function collectTelemetry() {
-        const nav = window.navigator;
-        const conn = nav.connection || nav.mozConnection || nav.webkitConnection || {};
-        
-        let html = `
-            <li><span>User Agent</span> <span style="font-size:0.7em; text-align:right; max-width:150px; overflow:hidden; text-overflow:ellipsis;">${nav.userAgent}</span></li>
-            <li><span>Device Memory</span> <span>${nav.deviceMemory ? nav.deviceMemory + ' GB' : 'N/A'}</span></li>
-            <li><span>CPU Cores</span> <span>${nav.hardwareConcurrency || 'N/A'}</span></li>
-            <li><span>Screen Res</span> <span>${window.screen.width}x${window.screen.height}</span></li>
-            <li><span>Connection Type</span> <span>${conn.effectiveType || 'Unknown'}</span></li>
-            <li><span>Est. RTT</span> <span>${conn.rtt ? conn.rtt + 'ms' : 'N/A'}</span></li>
-            <li><span>Data Saver</span> <span>${conn.saveData ? 'On' : 'Off'}</span></li>
-        `;
-        ui.telemetry.innerHTML = html;
-    }
-
-    // --- Measurement Logic ---
-
-    // 1. Ping & Jitter Measurement
-    async function measureLatency() {
-        ui.status.innerText = "Measuring Latency...";
+    // --- 1. Ping測定 ---
+    async function measurePing() {
+        ui.status.innerText = "応答速度を測定中...";
         const pings = [];
-        // 5回計測
-        for(let i=0; i<5; i++) {
+        
+        // 5回計測して平均を取る
+        for (let i = 0; i < 5; i++) {
             const start = performance.now();
-            await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
-            const end = performance.now();
-            pings.push(end - start);
+            try {
+                // キャッシュ回避のためランダムクエリを付与
+                await fetch(`${window.location.href}?ping=${Math.random()}`, { method: 'HEAD', cache: 'no-store' });
+                const end = performance.now();
+                pings.push(end - start);
+            } catch (e) {
+                pings.push(100); // エラー時は仮の値
+            }
             await sleep(100);
         }
-        
+
         const min = Math.min(...pings);
         const avg = pings.reduce((a, b) => a + b) / pings.length;
-        // Jitter: 平均偏差
         const jitter = pings.reduce((a, b) => a + Math.abs(b - avg), 0) / pings.length;
 
-        ui.pingVal.innerText = Math.round(min) + " ms";
-        ui.jitterVal.innerText = Math.round(jitter) + " ms";
-        ui.progress.style.width = "20%";
-        return { ping: min, jitter: jitter };
+        ui.pingVal.innerText = min.toFixed(0);
+        ui.jitterVal.innerText = jitter.toFixed(0);
+        return min;
     }
 
-    // 2. Download Measurement
+    // --- 2. ダウンロード測定 (ループ方式) ---
     async function measureDownload() {
-        ui.status.innerText = "Downloading Target File (18.58MB)...";
-        const startTime = performance.now();
+        ui.status.innerText = "ダウンロード速度測定中 (15秒)...";
+        ui.dlVal.parentElement.classList.add('active-measure');
         
-        try {
-            const response = await fetch(`${CONFIG.dlUrl}?t=${startTime}`);
-            if (!response.ok) throw new Error("DL Failed");
+        let totalBytesLoaded = 0;
+        const startTime = performance.now();
+        const endTime = startTime + TEST_DURATION;
+        
+        // 進捗バーのアニメーション用ループ
+        const progressInterval = setInterval(() => {
+            const now = performance.now();
+            const elapsed = now - startTime;
+            const percent = Math.min((elapsed / TEST_DURATION) * 100, 100);
+            ui.progress.style.width = percent + "%";
             
-            const reader = response.body.getReader();
-            let receivedLength = 0;
-
-            while(true) {
-                const {done, value} = await reader.read();
-                if (done) break;
-                receivedLength += value.length;
-                // UI Update (Throttled)
-                const percent = 20 + ((receivedLength / CONFIG.dlSize) * 40); // 20% -> 60%
-                ui.progress.style.width = percent + "%";
+            // リアルタイム速度表示 (経過時間が1秒を超えてから表示)
+            if (elapsed > 1000) {
+                const currentSpeed = (totalBytesLoaded * 8 / (elapsed / 1000)) / 1000000;
+                ui.dlVal.innerText = currentSpeed.toFixed(1);
             }
+        }, 100);
 
-            const durationSec = (performance.now() - startTime) / 1000;
-            const speedMbps = ((receivedLength * 8) / durationSec / 1000000);
-            
-            // アニメーション表示
-            animateValue(ui.dlVal, 0, speedMbps, 1000);
-            return speedMbps;
+        // データフェッチングのループ
+        try {
+            while (performance.now() < endTime) {
+                // キャッシュバスターを超強力にする（タイムスタンプ + ランダム）
+                const uniqueUrl = `${TEST_FILE_URL}?t=${Date.now()}&r=${Math.random()}`;
+                
+                const response = await fetch(uniqueUrl);
+                if (!response.ok) throw new Error("DL Error");
 
+                const reader = response.body.getReader();
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    totalBytesLoaded += value.length;
+
+                    // 時間切れならループ脱出
+                    if (performance.now() >= endTime) {
+                        reader.cancel();
+                        break;
+                    }
+                }
+            }
         } catch (e) {
             console.error(e);
-            ui.dlVal.innerText = "Error";
-            return 0;
+        } finally {
+            clearInterval(progressInterval);
+            ui.progress.style.width = "0%";
+            ui.dlVal.parentElement.classList.remove('active-measure');
         }
+
+        // 最終計算
+        const finalTime = (performance.now() - startTime) / 1000;
+        const finalSpeedMbps = (totalBytesLoaded * 8 / finalTime) / 1000000;
+        
+        ui.dlVal.innerText = finalSpeedMbps.toFixed(1);
+        return finalSpeedMbps;
     }
 
-    // 3. Upload Measurement (Simulation via httpbin)
+    // --- 3. アップロード測定 (擬似) ---
     async function measureUpload() {
-        ui.status.innerText = "Uploading Test Data (2MB)...";
-        const payload = generateRandomData(CONFIG.ulPayloadSize);
+        // アップロードは回線負荷やAPI制限を考慮し、短め(5-8秒)にするか、軽量パケットを繰り返す
+        ui.status.innerText = "アップロード速度測定中...";
+        ui.ulVal.parentElement.classList.add('active-measure');
+
+        let totalBytesUploaded = 0;
+        const upDuration = 8000; // アップロードは少し短めに設定(API制限回避)
         const startTime = performance.now();
+        const endTime = startTime + upDuration;
+        
+        // 1MBのダミーデータ
+        const chunkData = new Blob([new Array(1024 * 1024).fill('a').join('')]);
+
+        const progressInterval = setInterval(() => {
+            const now = performance.now();
+            const elapsed = now - startTime;
+            ui.progress.style.width = Math.min((elapsed / upDuration) * 100, 100) + "%";
+            
+            if (elapsed > 1000 && totalBytesUploaded > 0) {
+                const currentSpeed = (totalBytesUploaded * 8 / (elapsed / 1000)) / 1000000;
+                ui.ulVal.innerText = currentSpeed.toFixed(1);
+            }
+        }, 100);
 
         try {
-            await fetch(CONFIG.ulEndpoint, {
-                method: 'POST',
-                body: payload,
-                mode: 'cors'
-            });
+            // 並列リクエスト数（高速回線用）
+            const parallel = 2; 
 
-            const durationSec = (performance.now() - startTime) / 1000;
-            // 実際にはHTTPオーバーヘッドがあるため、少し補正する場合もありますが、ここでは生の値を使用
-            const speedMbps = ((CONFIG.ulPayloadSize * 8) / durationSec / 1000000);
-
-            ui.progress.style.width = "100%";
-            animateValue(ui.ulVal, 0, speedMbps, 1000);
-            return speedMbps;
+            // API制限を考慮しつつループ
+            while (performance.now() < endTime) {
+                const promises = [];
+                for(let i=0; i<parallel; i++) {
+                    promises.push(
+                        fetch(UPLOAD_ENDPOINT, {
+                            method: 'POST',
+                            body: chunkData,
+                            mode: 'cors'
+                        }).then(() => {
+                            totalBytesUploaded += chunkData.size;
+                        }).catch(e => console.log("Upload packet drop")) // 失敗は無視して続行
+                    );
+                }
+                await Promise.all(promises);
+            }
 
         } catch (e) {
             console.error(e);
-            ui.ulVal.innerText = "Error"; // CORS等のエラー時
+        } finally {
+            clearInterval(progressInterval);
+            ui.progress.style.width = "0%";
+            ui.ulVal.parentElement.classList.remove('active-measure');
+        }
+
+        const finalTime = (performance.now() - startTime) / 1000;
+        // データが0の場合はエラー扱い
+        if(totalBytesUploaded === 0) {
+            ui.ulVal.innerText = "Error";
             return 0;
         }
+
+        const finalSpeedMbps = (totalBytesUploaded * 8 / finalTime) / 1000000;
+        ui.ulVal.innerText = finalSpeedMbps.toFixed(1);
+        return finalSpeedMbps;
     }
 
-    // --- Analysis ---
-    function generateAnalysis(dl, ul, ping) {
-        let quality = "";
-        let color = "";
-        let capabilities = [];
+    // --- 結果判定 ---
+    function showResults(dl, ul, ping) {
+        ui.resultArea.style.display = "block";
+        
+        let grade = "";
+        let colorClass = "";
+        let comments = "";
+        let caps = [];
 
-        // 評価ロジック
-        if (dl > 100) {
-            quality = "Excellent (高速)";
-            color = "#A3BE8C"; // Green
-            capabilities = ["4K/8Kストリーミング (複数台可)", "超高速ファイル転送", "プロゲーミング (低遅延なら)"];
-        } else if (dl > 50) {
-            quality = "Very Good (快適)";
-            color = "#88C0D0"; // Blue
-            capabilities = ["4Kストリーミング", "快適なZoom会議", "オンラインゲーム"];
-        } else if (dl > 20) {
-            quality = "Good (普通)";
-            color = "#EBCB8B"; // Yellow
-            capabilities = ["HD動画再生", "Webブラウジング", "SNS"];
+        // 判定ロジック
+        if (dl >= 200) {
+            grade = "非常に高速 (S)";
+            colorClass = "bg-blue";
+            comments = "光回線などの非常に安定した環境です。";
+            caps = ["8K動画のストリーミング再生", "大容量ゲームの高速ダウンロード", "複数デバイスでの同時利用"];
+        } else if (dl >= 80) {
+            grade = "高速 (A)";
+            colorClass = "bg-green";
+            comments = "日常利用で困ることはほぼありません。";
+            caps = ["4K動画の視聴", "快適なオンラインゲーム", "Web会議 (Zoom/Teams)"];
+        } else if (dl >= 30) {
+            grade = "普通 (B)";
+            colorClass = "bg-green";
+            comments = "標準的な速度です。";
+            caps = ["HD動画 (1080p) の視聴", "Webブラウジング", "SNSの利用"];
         } else {
-            quality = "Fair/Slow (低速)";
-            color = "#BF616A"; // Red
-            capabilities = ["テキスト閲覧", "低画質動画", "メール"];
+            grade = "低速 (C)";
+            colorClass = "bg-red";
+            comments = "動画が止まるなどの影響が出る可能性があります。";
+            caps = ["テキストサイトの閲覧", "メール・LINE", "低画質での動画再生"];
         }
 
-        if (ping > 100) capabilities.push("⚠ ラグを感じる可能性があります");
+        if (ping > 50) {
+            comments += "<br><small>※応答速度(Ping)が遅いため、アクションゲーム等でラグを感じるかもしれません。</small>";
+        }
 
-        ui.analysisCard.style.display = "block";
-        ui.analysisText.innerHTML = `
-            <strong style="color:${color}; font-size:1.1em;">判定: ${quality}</strong><br>
-            あなたの回線は <b>${dl.toFixed(1)} Mbps</b> のダウンロード速度を記録しました。<br>
-            <br>
-            <b>この回線で可能なこと:</b>
-            <ul style="margin-top:5px; padding-left:20px;">
-                ${capabilities.map(c => `<li>${c}</li>`).join('')}
-            </ul>
-            <div style="font-size:0.8em; color:#666; margin-top:10px;">
-                ※テストに使用したファイル: ${ (CONFIG.dlSize / 1024 / 1024).toFixed(2) } MB (JPEG image)
-            </div>
-        `;
+        ui.gradeBadge.className = "result-badge " + colorClass;
+        ui.gradeBadge.innerText = grade;
+        ui.gradeComment.innerHTML = comments;
+        ui.capList.innerHTML = caps.map(c => `<li>${c}</li>`).join('');
     }
 
-    // --- Helpers ---
-    function animateValue(obj, start, end, duration) {
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = (progress * (end - start) + start).toFixed(2);
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
-            }
-        };
-        window.requestAnimationFrame(step);
-    }
-
-    // --- Main Runner ---
+    // --- 実行 ---
     ui.btn.addEventListener('click', async () => {
+        // UIリセット
         ui.btn.disabled = true;
-        ui.analysisCard.style.display = "none";
+        ui.resultArea.style.display = "none";
+        ui.dlVal.innerText = "--";
+        ui.ulVal.innerText = "--";
         
-        // 0. 環境情報取得
-        collectTelemetry();
-
-        // 1. Latency
-        const latency = await measureLatency();
+        // 1. Ping
+        const ping = await measurePing();
         
         // 2. Download
-        const dlSpeed = await measureDownload();
-        await sleep(500);
-
+        const dl = await measureDownload();
+        
         // 3. Upload
-        const ulSpeed = await measureUpload();
+        const ul = await measureUpload();
 
-        // 4. Finish
-        ui.status.innerText = "Diagnostics Completed";
+        // 完了
+        ui.status.innerText = "測定完了";
         ui.btn.disabled = false;
-        ui.btn.innerText = "RE-TEST";
-
-        // 5. Analysis
-        generateAnalysis(dlSpeed, ulSpeed, latency.ping);
+        ui.btn.innerText = "再測定";
+        
+        showResults(dl, ul, ping);
     });
-
-    // 初期ロード時に情報を表示
-    collectTelemetry();
-
 </script>
 
 </body>
