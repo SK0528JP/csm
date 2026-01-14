@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Test - 18.58MB Model</title>
+    <style>
+        :root { --primary: #00d1b2; --bg: #1a1a1a; }
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: var(--bg); color: white; }
+        .card { background: #2a2a2a; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 320px; border: 1px solid #333; }
+        .speed-display { font-size: 4rem; font-weight: 800; color: var(--primary); margin: 10px 0; }
+        .unit { font-size: 1.2rem; color: #888; }
+        button { background: var(--primary); color: #1a1a1a; border: none; padding: 15px 40px; font-size: 1.1rem; font-weight: bold; border-radius: 50px; cursor: pointer; transition: 0.3s; width: 100%; }
+        button:hover { opacity: 0.8; transform: scale(1.02); }
+        button:disabled { background: #444; color: #888; transform: none; }
+        #status { margin-top: 15px; font-size: 0.85rem; color: #666; }
+        progress { width: 100%; height: 10px; margin-top: 20px; accent-color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div style="font-size: 0.9rem; color: #888;">DOWNLOAD SPEED</div>
+        <div class="speed-display">
+            <span id="speed">0.0</span><span class="unit">Mbps</span>
+        </div>
+        <button id="start-btn">RUN TEST</button>
+        <progress id="progress" value="0" max="100" style="display:none;"></progress>
+        <div id="status">Ready (File: 18.58MB)</div>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const speedEl = document.getElementById('speed');
+        const statusEl = document.getElementById('status');
+        const progressEl = document.getElementById('progress');
+
+        // あなたが用意したファイルの設定
+        const TEST_URL = "./test.jpg"; 
+        const FILE_SIZE_BYTES = 18.58 * 1024 * 1024; // MBをバイトに変換
+
+        startBtn.addEventListener('click', async () => {
+            startBtn.disabled = true;
+            progressEl.style.display = "block";
+            progressEl.value = 0;
+            statusEl.innerText = "Downloading...";
+            speedEl.innerText = "---";
+
+            const startTime = performance.now();
+            
+            try {
+                // fetchでストリームを取得し、進捗をシミュレート
+                const response = await fetch(`${TEST_URL}?nocache=${startTime}`);
+                if (!response.ok) throw new Error("File not found");
+
+                const reader = response.body.getReader();
+                let receivedLength = 0;
+
+                while(true) {
+                    const {done, value} = await reader.read();
+                    if (done) break;
+                    receivedLength += value.length;
+                    // 進捗バーの更新
+                    progressEl.value = (receivedLength / FILE_SIZE_BYTES) * 100;
+                }
+
+                const endTime = performance.now();
+                const durationSeconds = (endTime - startTime) / 1000;
+                
+                // Mbps計算: (バイト * 8ビット) / 秒 / 1,000,000
+                const speedMbps = ((receivedLength * 8) / durationSeconds / 1000000).toFixed(1);
+
+                speedEl.innerText = speedMbps;
+                statusEl.innerText = `Success! (${(receivedLength/1024/1024).toFixed(2)} MB)`;
+
+            } catch (error) {
+                statusEl.innerText = "Error: " + error.message;
+                speedEl.innerText = "0.0";
+            } finally {
+                startBtn.disabled = false;
+                setTimeout(() => { progressEl.style.display = "none"; }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
